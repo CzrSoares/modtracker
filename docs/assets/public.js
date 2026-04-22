@@ -38,7 +38,7 @@ async function loadDashboard() {
 function renderMeta(data) {
   document.getElementById("periodLabel").textContent = formatPeriod(data.period);
   document.getElementById("generatedAt").textContent = formatTimestamp(data.generated_at);
-  document.getElementById("heroNote").textContent = `${data.staff_count} staff member${data.staff_count === 1 ? "" : "s"} in the published snapshot`;
+  document.getElementById("heroNote").textContent = `${data.staff_count} staff member${data.staff_count === 1 ? "" : "s"} in the current month`;
   document.getElementById("tableSummary").textContent = `${data.rows.length} ranked entries`;
 }
 

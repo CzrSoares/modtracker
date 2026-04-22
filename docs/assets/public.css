@@ -112,6 +112,11 @@ body {
   margin-bottom: 1.25rem;
 }
 
+.warning-text {
+  color: red;
+  font-weight: bold;
+}
+
 .hero > div {
   background: rgba(13, 16, 24, 0.86);
   border: 1px solid var(--border);
