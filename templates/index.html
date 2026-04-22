@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ModTracker — Discord Staff</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="logo">
+    ModTracker
+    <span>discord staff dashboard</span>
+  </div>
+  <div class="header-right">
+    <div class="month-picker">
+      <label>Period</label>
+      <select id="globalMonth" onchange="onPeriodChange()"></select>
+    </div>
+    <button class="btn btn-export" onclick="doExport('excel')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Excel
+    </button>
+    <button class="btn btn-pdf" onclick="doExport('pdf')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      PDF
+    </button>
+  </div>
+</header>
+
+<!-- ── Nav ────────────────────────────────────────────────────────────── -->
+<nav class="nav-tabs">
+  <button class="nav-tab active" data-view="dashboard">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </button>
+  <button class="nav-tab" data-view="admin">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Staff Management
+  </button>
+</nav>
+
+<!-- ── Main ───────────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Dashboard View -->
+  <section class="view active" id="view-dashboard">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card kban">
+        <div class="kpi-label"><span class="kpi-dot"></span>Bans</div>
+        <div class="kpi-value" id="kpi-bans">—</div>
+        <div class="kpi-sub"  id="kpi-bans-sub">loading…</div>
+      </div>
+      <div class="kpi-card kmute">
+        <div class="kpi-label"><span class="kpi-dot"></span>Mutes</div>
+        <div class="kpi-value" id="kpi-mutes">—</div>
+        <div class="kpi-sub"  id="kpi-mutes-sub">loading…</div>
+      </div>
+      <div class="kpi-card kkick">
+        <div class="kpi-label"><span class="kpi-dot"></span>Kicks</div>
+        <div class="kpi-value" id="kpi-kicks">—</div>
+        <div class="kpi-sub"  id="kpi-kicks-sub">loading…</div>
+      </div>
+      <div class="kpi-card kwarn">
+        <div class="kpi-label"><span class="kpi-dot"></span>Warns</div>
+        <div class="kpi-value" id="kpi-warns">—</div>
+        <div class="kpi-sub"  id="kpi-warns-sub">loading…</div>
+      </div>
+      <div class="kpi-card kmsg">
+        <div class="kpi-label"><span class="kpi-dot"></span>Messages</div>
+        <div class="kpi-value" id="kpi-messages">—</div>
+        <div class="kpi-sub"  id="kpi-messages-sub">loading…</div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">
+          Staff Actions Breakdown
+          <span class="period-badge" id="chartBadge">—</span>
+        </div>
+        <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Action Distribution</div>
+        <div class="chart-wrap doughnut-wrap"><canvas id="doughnutChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Rankings table -->
+    <div class="section-header">
+      <div class="section-title">Staff Rankings</div>
+    </div>
+    <div class="table-wrapper" id="staffTable"></div>
+
+  </section>
+
+  <!-- Admin View -->
+  <section class="view" id="view-admin">
+    <div class="admin-header">
+      <div>
+        <div class="admin-title">Staff Management</div>
+        <div class="admin-sub" id="adminSub">Manage staff for the selected period</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Staff Member
+      </button>
+    </div>
+    <div class="admin-grid" id="adminGrid"></div>
+  </section>
+
+</main>
+
+<!-- ── Modal ──────────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Add Staff Member</div>
+      <button class="modal-close" id="modalCloseBtn" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="form-group" id="nameGroup">
+      <label class="form-label">Username / Display Name</label>
+      <input class="form-input" id="inputName" type="text" placeholder="e.g. CoolModerator" autocomplete="off">
+    </div>
+
+    <div class="period-box">
+      <div class="period-box-label">Editing Period</div>
+      <div class="period-box-row">
+        <select id="inputMonth" class="form-input"></select>
+        <select id="inputYear"  class="form-input"></select>
+      </div>
+    </div>
+
+    <div class="stats-input-grid">
+      <div class="form-group">
+        <label class="form-label ban-label">Bans</label>
+        <input class="form-input" id="inputBans"     type="number" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label mute-label">Mutes</label>
+        <input class="form-input" id="inputMutes"    type="number" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label kick-label">Kicks</label>
+        <input class="form-input" id="inputKicks"    type="number" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label warn-label">Warns</label>
+        <input class="form-input" id="inputWarns"    type="number" min="0" value="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label msg-label">Messages</label>
+      <input class="form-input" id="inputMessages" type="number" min="0" value="0">
+    </div>
+
+    <div class="preview-box">
+      <div class="preview-box-label">Live Preview</div>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="preview-stat-label">Total Actions</div>
+          <div class="preview-stat-value" id="prevTotal">0</div>
+        </div>
+        <div class="preview-stat">
+          <div class="preview-stat-label">Grand Total</div>
+          <div class="preview-stat-value" id="prevGrand">0</div>
+        </div>
+        <div class="preview-stat">
+          <div class="preview-stat-label">Avg / Type</div>
+          <div class="preview-stat-value" id="prevAvg">—</div>
+        </div>
+        <div class="preview-stat">
+          <div class="preview-stat-label">Bans %</div>
+          <div class="preview-stat-value" id="prevBanPct">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-primary"   id="modalSaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Confirm dialog ─────────────────────────────────────────────────── -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠</div>
+    <div class="confirm-title" id="confirmTitle">Are you sure?</div>
+    <div class="confirm-text"  id="confirmText"></div>
+    <div class="confirm-btns">
+      <button class="btn btn-secondary" id="confirmNo">Cancel</button>
+      <button class="btn btn-danger"    id="confirmYes">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ──────────────────────────────────────────────────────────── -->
+<div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>
