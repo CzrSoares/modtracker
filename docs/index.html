@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ModTracker Public Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/public.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      ModTracker
+      <span>public dashboard</span>
+    </div>
+    <div class="header-meta">
+      <div class="meta-card">
+        <span class="meta-label">Published Period</span>
+        <strong id="periodLabel">Loading...</strong>
+      </div>
+      <div class="meta-card">
+        <span class="meta-label">Last Update</span>
+        <strong id="generatedAt">Loading...</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Live snapshot</p>
+        <h1>Staff moderation statistics</h1>
+        <p class="hero-copy">This public page shows only the latest published dashboard snapshot from the local admin app.</p>
+      </div>
+      <div class="hero-note" id="heroNote">Waiting for data...</div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi-card kban">
+        <div class="kpi-label"><span class="kpi-dot"></span>Bans</div>
+        <div class="kpi-value" id="kpi-bans">-</div>
+      </div>
+      <div class="kpi-card kmute">
+        <div class="kpi-label"><span class="kpi-dot"></span>Mutes</div>
+        <div class="kpi-value" id="kpi-mutes">-</div>
+      </div>
+      <div class="kpi-card kkick">
+        <div class="kpi-label"><span class="kpi-dot"></span>Kicks</div>
+        <div class="kpi-value" id="kpi-kicks">-</div>
+      </div>
+      <div class="kpi-card kwarn">
+        <div class="kpi-label"><span class="kpi-dot"></span>Warns</div>
+        <div class="kpi-value" id="kpi-warns">-</div>
+      </div>
+      <div class="kpi-card kmsg">
+        <div class="kpi-label"><span class="kpi-dot"></span>Messages</div>
+        <div class="kpi-value" id="kpi-messages">-</div>
+      </div>
+    </section>
+
+    <section class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Staff Actions Breakdown</div>
+        <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Action Distribution</div>
+        <div class="chart-wrap doughnut-wrap"><canvas id="doughnutChart"></canvas></div>
+      </div>
+    </section>
+
+    <section class="table-section">
+      <div class="section-title-row">
+        <div>
+          <p class="eyebrow">Ranking</p>
+          <h2>Staff rankings</h2>
+        </div>
+        <div class="table-summary" id="tableSummary">Loading...</div>
+      </div>
+      <div class="table-wrapper" id="staffTable"></div>
+    </section>
+  </main>
+
+  <div id="status" class="status">Loading public snapshot...</div>
+  <script src="./assets/public.js"></script>
+</body>
+</html>

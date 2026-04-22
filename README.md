@@ -41,6 +41,51 @@ Example:
 MODTRACKER_PORT=8000 MODTRACKER_DATA_FILE=./data/local.json python run.py
 ```
 
+## Public GitHub Pages Dashboard
+
+The repo now supports two modes:
+
+- Local Flask app: full dashboard plus admin management for your machine only
+- Public static site: dashboard-only page served from `docs/` on GitHub Pages
+
+### Publish the latest snapshot
+
+After you update staff data locally, run:
+
+```bash
+python export_public_snapshot.py
+```
+
+That script:
+
+- reads your local `data/db.json`
+- picks the latest available period by default
+- writes one public file at `docs/data/dashboard.json`
+- replaces the previous public month, so only the newest published period remains visible on GitHub Pages
+
+You can also publish a specific period manually:
+
+```bash
+python export_public_snapshot.py 2026-04
+```
+
+### GitHub Pages setup
+
+On GitHub, configure Pages to deploy from:
+
+- Branch: your main branch
+- Folder: `/docs`
+
+Then your workflow becomes:
+
+1. Run the local app and update data.
+2. Run `python export_public_snapshot.py`.
+3. Commit the updated `docs/` files.
+4. Push to GitHub.
+5. GitHub Pages updates the public dashboard.
+
+The admin tab is not included in `docs/`, so the public site exposes only the dashboard snapshot.
+
 ## Project Layout
 
 ```text
